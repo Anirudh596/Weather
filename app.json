@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anytheboss2.Weather"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,17 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b16d3015-f587-43a4-9412-a22a3ffaa127"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b16d3015-f587-43a4-9412-a22a3ffaa127"
     }
   }
 }
