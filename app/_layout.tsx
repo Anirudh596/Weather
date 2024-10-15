@@ -15,6 +15,8 @@ import CustomSplashScreen from "@/components/CustomSplashScreen"; // Import the 
 import Toast from "react-native-toast-message"; // Import toast library
 import { TemperatureProvider } from "@/hooks/TemperatureContext";
 import { PaperProvider } from "react-native-paper";
+import { SettingsProvider } from "@/hooks/useSettingsContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync(); // Keep splash screen visible by default
 
@@ -62,32 +64,31 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    // Hide splash screen when both fonts and weather data are ready
     if (loaded && !weatherLoading) {
       SplashScreen.hideAsync();
     }
   }, [loaded, weatherLoading]);
 
   if (!loaded || weatherLoading) {
-    // Show the custom splash screen while loading
     return <CustomSplashScreen />;
   }
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <TemperatureProvider>
-        <PaperProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="settings" options={{ headerShown: false }} />
-            <Stack.Screen name="city" options={{ headerShown: false }} />
-            <Stack.Screen name="about" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          {/* Render the Toast component */}
-          <Toast />
-        </PaperProvider>
+        <SettingsProvider>
+          <PaperProvider>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="settings" options={{ headerShown: false }} />
+              <Stack.Screen name="city" options={{ headerShown: false }} />
+              <Stack.Screen name="about" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <Toast />
+          </PaperProvider>
+        </SettingsProvider>
       </TemperatureProvider>
-    </>
+    </GestureHandlerRootView>
   );
 }

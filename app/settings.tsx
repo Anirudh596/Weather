@@ -1,54 +1,56 @@
-import { router } from "expo-router";
-import React, { useState } from "react";
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  View,
-  Platform,
-  ScrollView,
-} from "react-native";
+import React, { useState, useContext } from "react";
+import { SafeAreaView, ScrollView, View, StyleSheet } from "react-native";
 import {
   Appbar,
   List,
-  Divider,
   Switch,
-  Modal,
+  Divider,
   Portal,
+  Modal,
   RadioButton,
   Button,
 } from "react-native-paper";
+import { router } from "expo-router";
+import { SettingsContext } from "@/hooks/useSettingsContext";
 
 const Settings = () => {
-  // Switch states
-  const [rainAlerts, setRainAlerts] = useState(false);
-  const [dailyForecast, setDailyForecast] = useState(false);
+  const settings = useContext(SettingsContext);
 
-  // States for unit selection modals
-  const [selectedTemperatureUnit, setSelectedTemperatureUnit] =
-    useState("Celsius (°C)");
-  const [selectedWindUnit, setSelectedWindUnit] = useState(
-    "Miles per hour (mph)"
-  );
-  const [selectedPressureUnit, setSelectedPressureUnit] =
-    useState("Hectopascals (hPa)");
-  const [selectedVisibilityUnit, setSelectedVisibilityUnit] =
-    useState("Kilometres (km)");
+  if (!settings) {
+    throw new Error("SettingsContext must be used within a SettingsProvider");
+  }
 
-  // Modal visibility states
-  const [isTemperatureModalVisible, setTemperatureModalVisible] =
-    useState(false);
-  const [isWindModalVisible, setWindModalVisible] = useState(false);
-  const [isPressureModalVisible, setPressureModalVisible] = useState(false);
-  const [isVisibilityModalVisible, setVisibilityModalVisible] = useState(false);
+  const {
+    rainAlerts,
+    setRainAlerts,
+    dailyForecast,
+    setDailyForecast,
+    temperatureUnit,
+    setTemperatureUnit,
+    windUnit,
+    setWindUnit,
+    pressureUnit,
+    setPressureUnit,
+    visibilityUnit,
+    setVisibilityUnit,
+  } = settings;
 
-  // Function to close all modals
-  const closeAllModals = () => {
-    setTemperatureModalVisible(false);
-    setWindModalVisible(false);
-    setPressureModalVisible(false);
-    setVisibilityModalVisible(false);
-  };
+  const [modalsVisible, setModalsVisible] = useState({
+    temperature: false,
+    wind: false,
+    pressure: false,
+    visibility: false,
+  });
+
+  const openModal = (modalName) =>
+    setModalsVisible({ ...modalsVisible, [modalName]: true });
+  const closeAllModals = () =>
+    setModalsVisible({
+      temperature: false,
+      wind: false,
+      pressure: false,
+      visibility: false,
+    });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,8 +66,8 @@ const Settings = () => {
           </List.Subheader>
 
           <List.Item
-            titleStyle={{ color: "#000" }}
             title="Rain alerts"
+            titleStyle={{ color: "#000" }}
             right={() => (
               <Switch
                 color="#627E75"
@@ -88,53 +90,39 @@ const Settings = () => {
               />
             )}
           />
-
           <Divider />
         </View>
 
-        {/* Units Section */}
         <View style={styles.section}>
           <List.Subheader style={styles.subheader}>Units</List.Subheader>
 
-          {/* Temperature */}
           <List.Item
-            titleStyle={{ color: "#000" }}
             title="Temperature"
-            description={selectedTemperatureUnit}
-            right={() => <List.Icon icon="chevron-right" />}
-            onPress={() => setTemperatureModalVisible(true)}
-          />
-
-          {/* Wind */}
-          <List.Item
             titleStyle={{ color: "#000" }}
+            description={temperatureUnit}
+            onPress={() => openModal("temperature")}
+          />
+          <List.Item
             title="Wind"
-            description={selectedWindUnit}
-            right={() => <List.Icon icon="chevron-right" />}
-            onPress={() => setWindModalVisible(true)}
-          />
-
-          {/* Air Pressure */}
-          <List.Item
             titleStyle={{ color: "#000" }}
+            description={windUnit}
+            onPress={() => openModal("wind")}
+          />
+          <List.Item
             title="Air pressure"
-            description={selectedPressureUnit}
-            right={() => <List.Icon icon="chevron-right" />}
-            onPress={() => setPressureModalVisible(true)}
-          />
-
-          {/* Visibility */}
-          <List.Item
             titleStyle={{ color: "#000" }}
+            description={pressureUnit}
+            onPress={() => openModal("pressure")}
+          />
+          <List.Item
             title="Visibility"
-            description={selectedVisibilityUnit}
-            right={() => <List.Icon icon="chevron-right" />}
-            onPress={() => setVisibilityModalVisible(true)}
+            titleStyle={{ color: "#000" }}
+            description={visibilityUnit}
+            onPress={() => openModal("visibility")}
           />
 
           <Divider />
         </View>
-
         {/* About Weather Section */}
         <View style={styles.section}>
           <List.Item
@@ -146,16 +134,15 @@ const Settings = () => {
         </View>
       </ScrollView>
 
-      {/* Modal for Temperature Unit */}
       <Portal>
         <Modal
-          visible={isTemperatureModalVisible}
-          onDismiss={closeAllModals}
           contentContainerStyle={styles.modalContainer}
+          visible={modalsVisible.temperature}
+          onDismiss={closeAllModals}
         >
           <RadioButton.Group
-            onValueChange={(value) => setSelectedTemperatureUnit(value)}
-            value={selectedTemperatureUnit}
+            onValueChange={setTemperatureUnit}
+            value={temperatureUnit}
           >
             <RadioButton.Item
               color="#627E75"
@@ -173,23 +160,18 @@ const Settings = () => {
           <Button
             buttonColor="#627E75"
             labelStyle={{ color: "#fff" }}
-            mode="contained"
             onPress={closeAllModals}
           >
             Done
           </Button>
         </Modal>
 
-        {/* Modal for Wind Unit */}
         <Modal
-          visible={isWindModalVisible}
-          onDismiss={closeAllModals}
           contentContainerStyle={styles.modalContainer}
+          visible={modalsVisible.wind}
+          onDismiss={closeAllModals}
         >
-          <RadioButton.Group
-            onValueChange={(value) => setSelectedWindUnit(value)}
-            value={selectedWindUnit}
-          >
+          <RadioButton.Group onValueChange={setWindUnit} value={windUnit}>
             <RadioButton.Item
               color="#627E75"
               labelStyle={{ color: "#000" }}
@@ -212,55 +194,51 @@ const Settings = () => {
           <Button
             buttonColor="#627E75"
             labelStyle={{ color: "#fff" }}
-            mode="contained"
             onPress={closeAllModals}
           >
             Done
           </Button>
         </Modal>
 
-        {/* Modal for Pressure Unit */}
         <Modal
-          visible={isPressureModalVisible}
-          onDismiss={closeAllModals}
           contentContainerStyle={styles.modalContainer}
+          visible={modalsVisible.pressure}
+          onDismiss={closeAllModals}
         >
           <RadioButton.Group
-            onValueChange={(value) => setSelectedPressureUnit(value)}
-            value={selectedPressureUnit}
+            onValueChange={setPressureUnit}
+            value={pressureUnit}
           >
             <RadioButton.Item
+              label="Hectopascals (hPa)"
               color="#627E75"
               labelStyle={{ color: "#000" }}
-              label="Hectopascals (hPa)"
               value="Hectopascals (hPa)"
             />
             <RadioButton.Item
+              label="Inches of mercury (inHg)"
               color="#627E75"
               labelStyle={{ color: "#000" }}
-              label="Inches of mercury (inHg)"
               value="Inches of mercury (inHg)"
             />
           </RadioButton.Group>
           <Button
             buttonColor="#627E75"
             labelStyle={{ color: "#fff" }}
-            mode="contained"
             onPress={closeAllModals}
           >
             Done
           </Button>
         </Modal>
 
-        {/* Modal for Visibility Unit */}
         <Modal
-          visible={isVisibilityModalVisible}
-          onDismiss={closeAllModals}
           contentContainerStyle={styles.modalContainer}
+          visible={modalsVisible.visibility}
+          onDismiss={closeAllModals}
         >
           <RadioButton.Group
-            onValueChange={(value) => setSelectedVisibilityUnit(value)}
-            value={selectedVisibilityUnit}
+            onValueChange={setVisibilityUnit}
+            value={visibilityUnit}
           >
             <RadioButton.Item
               color="#627E75"
@@ -269,8 +247,8 @@ const Settings = () => {
               value="Kilometres (km)"
             />
             <RadioButton.Item
-              color="#627E75"
               labelStyle={{ color: "#000" }}
+              color="#627E75"
               label="Miles (mi)"
               value="Miles (mi)"
             />
@@ -278,7 +256,6 @@ const Settings = () => {
           <Button
             buttonColor="#627E75"
             labelStyle={{ color: "#fff" }}
-            mode="contained"
             onPress={closeAllModals}
           >
             Done
@@ -289,7 +266,6 @@ const Settings = () => {
   );
 };
 
-// Styles for Settings Screen
 const styles = StyleSheet.create({
   container: {
     flex: 1,

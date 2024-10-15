@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -8,24 +8,36 @@ import {
   ScrollView,
   StatusBar as ReactStatusBar,
   useColorScheme,
+  TouchableOpacity,
   Button,
+  Linking,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Video } from "expo-av";
-import { Card, Title, Paragraph } from "react-native-paper";
+import { Card, Title, Paragraph, Divider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import * as Location from "expo-location";
 import {
   Entypo,
   Feather,
   FontAwesome,
+  FontAwesome5,
+  FontAwesome6,
   Ionicons,
+  MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useWeather } from "@/hooks/useWeather";
 import { useTemperature } from "@/hooks/TemperatureContext";
-
+import { SettingsContext } from "@/hooks/useSettingsContext";
+import {
+  convertPressure,
+  convertTemperature,
+  convertVisibility,
+  convertWindSpeed,
+} from "@/utility/functions";
+import SunriseSunsetProgress from "@/components/SunriseSunsetProgress";
 const { width, height } = Dimensions.get("window");
 
 const LAST_LOCATION_KEY = "last_location";
@@ -39,6 +51,8 @@ export default function WeatherApp() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const color = useColorScheme();
+  const { temperatureUnit, windUnit, pressureUnit, visibilityUnit } =
+    useContext(SettingsContext);
   const { unit } = useTemperature();
   const { weatherData, airQuality, loading, error } = useWeather(
     location?.latitude,
@@ -126,14 +140,17 @@ export default function WeatherApp() {
 
   const videoMap: any = {
     Clear:
-      "https://res.cloudinary.com/djgpm9plo/video/upload/v1728810171/191224-889684869_medium_online-video-cutter.com_wc4l0c.mp4",
+      "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
     Clouds:
       "https://res.cloudinary.com/djgpm9plo/video/upload/v1728810171/191224-889684869_medium_online-video-cutter.com_wc4l0c.mp4",
     Rain: "https://res.cloudinary.com/djgpm9plo/video/upload/v1728810171/191224-889684869_medium_online-video-cutter.com_wc4l0c.mp4",
+    Haze: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729012775/12488549_1080_1920_30fps_tey1dc.mp4",
+    Tornado:
+      "https://res.cloudinary.com/djgpm9plo/video/upload/v1728810171/191224-889684869_medium_online-video-cutter.com_wc4l0c.mp4",
   };
 
   const videoUri = videoMap[weatherData?.weather[0]?.main] || videoMap["Clear"];
-  console.log(weatherData);
+
   const windSpeedCategories = [
     { min: 0, max: 0.3, title: "Calm" },
     { min: 0.3, max: 1.5, title: "Light Air" },
@@ -157,6 +174,30 @@ export default function WeatherApp() {
   }
 
   const cardWidth = width > 600 ? "30%" : "30%";
+  const temperature = convertTemperature(
+    weatherData?.main?.temp,
+    temperatureUnit
+  );
+  const feelsTemperature = convertTemperature(
+    weatherData?.main?.feels_like,
+    temperatureUnit
+  );
+  const windSpeed = convertWindSpeed(weatherData?.wind?.speed, windUnit);
+  const pressure = convertPressure(weatherData?.main?.pressure, pressureUnit);
+  const visibility = convertVisibility(weatherData?.visibility, visibilityUnit);
+  const minTemperature = convertTemperature(
+    weatherData?.main?.temp_min,
+    temperatureUnit
+  );
+  const maxTemperature = convertTemperature(
+    weatherData?.main?.temp_max,
+    temperatureUnit
+  );
+  console.log(weatherData);
+
+  const sunRiseTime = new Date(weatherData?.sys?.sunrise);
+  const sunSetTime = new Date(weatherData?.sys?.sunset);
+  console.log(sunRiseTime.toLocaleTimeString()); // Convert to
   return (
     <View style={styles.container}>
       <StatusBar
@@ -198,7 +239,8 @@ export default function WeatherApp() {
         </View>
         <View style={{ padding: 24, marginBottom: 12 }}>
           <Text style={styles.tempText}>
-            {Math.round(weatherData?.main?.temp)}°C
+            {Math.round(temperature)}°
+            {temperatureUnit === "Celsius (°C)" ? "C" : "F"}
           </Text>
           <View
             style={{
@@ -209,26 +251,33 @@ export default function WeatherApp() {
             }}
           >
             <Text style={styles.weatherText}>
-              {weatherData?.weather[0]?.main}{" "}
-              {Math.round(weatherData?.main?.temp_min)}°/
-              {Math.round(weatherData?.main?.temp_max)}° Air Quality:{" "}
+              {weatherData?.weather[0]?.main} {Math.round(minTemperature)}°/
+              {Math.round(maxTemperature)}° Air Quality:{" "}
               {airQuality?.[0]?.main?.aqi} - satisfactory
             </Text>
           </View>
         </View>
         <View
-          style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 16 }}
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 10,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
           <View style={[styles.card, { flexBasis: cardWidth }]}>
-            <FontAwesome name="thermometer" size={24} color="white" />
+            <FontAwesome name="thermometer" size={20} color="white" />
             <Paragraph style={styles.text}>Feels like</Paragraph>
             <Title style={styles.title}>
-              {Math.round(weatherData?.main?.feels_like)}°C
+              {Math.round(feelsTemperature)}°
+              {temperatureUnit === "Celsius (°C)" ? "C" : "F"}
             </Title>
           </View>
 
           <View style={[styles.card, { flexBasis: cardWidth }]}>
-            <Entypo name="drop" size={24} color="white" />
+            <Entypo name="drop" size={20} color="white" />
             <Paragraph style={styles.text}>Humidity</Paragraph>
             <Title style={styles.title}>
               {Math.round(weatherData?.main?.humidity)}%
@@ -236,36 +285,225 @@ export default function WeatherApp() {
           </View>
 
           <View style={[styles.card, { flexBasis: cardWidth }]}>
-            <Feather name="wind" size={24} color="white" />
+            <Feather name="wind" size={20} color="white" />
             <Paragraph style={styles.text}>NNE wind</Paragraph>
             <Title style={styles.title}>
-              {Math.round(weatherData?.wind?.speed)} m/s
+              {Math.round(windSpeed)}{" "}
+              {windUnit === "Kilometres per hour (km/h)"
+                ? "km/h"
+                : windUnit === "Meters per second (m/s)"
+                ? "m/s"
+                : "mph"}
             </Title>
           </View>
 
           <View style={[styles.card, { flexBasis: cardWidth }]}>
-            <Entypo name="air" size={24} color="white" />
+            <Entypo name="air" size={20} color="white" />
             <Paragraph style={styles.text}>Air Pressure</Paragraph>
             <Title style={styles.title}>
-              {weatherData?.main?.pressure} hPa
+              {Math.round(pressure)}{" "}
+              {pressureUnit === "Hectopascals (hPa)" ? "hPa" : "inHg"}
             </Title>
           </View>
 
           <View style={[styles.card, { flexBasis: cardWidth }]}>
-            <FontAwesome name="eye" size={24} color="white" />
+            <FontAwesome name="eye" size={20} color="white" />
             <Paragraph style={styles.text}>Visibility</Paragraph>
             <Title style={styles.title}>
-              {weatherData?.visibility / 1000} km
+              {Math.round(visibility)}{" "}
+              {visibilityUnit === "Miles (mi)" ? "mi" : "Km"}
             </Title>
           </View>
           <View style={[styles.card, { flexBasis: cardWidth }]}>
-            <Entypo name="globe" size={24} color="white" />
+            <Entypo name="globe" size={20} color="white" />
             <Paragraph style={styles.text} numberOfLines={1}>
               Ground Level
             </Paragraph>
             <Title style={styles.title}>
               {weatherData?.main?.grnd_level} ft.
             </Title>
+          </View>
+        </View>
+        {/* <SunriseSunsetProgress
+          sunriseTime={sunRiseTime}
+          sunsetTime={sunSetTime}
+        /> */}
+        <View
+          style={[
+            {
+              backgroundColor: "rgba(0,0,0,0.3)",
+              borderRadius: 16,
+              marginHorizontal: 10,
+              marginVertical: 12,
+            },
+          ]}
+        >
+          <TouchableOpacity
+            onPress={() => Linking.openURL(`https://www.healthline.com`)}
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: 10,
+              marginLeft: 14,
+            }}
+          >
+            <Title style={{ fontSize: 16 }}>Health and LifeStyle</Title>
+            <Entypo name="chevron-right" size={24} color={"white"} />
+          </TouchableOpacity>
+
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 10,
+              alignItems: "center",
+              justifyContent: "center",
+              marginVertical: 20,
+            }}
+          >
+            <TouchableOpacity
+              style={[
+                styles.card,
+                {
+                  flexBasis: cardWidth,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  backgroundColor: "transparent",
+                },
+              ]}
+            >
+              <Ionicons name="flower" size={24} color="white" />
+              <Paragraph style={[styles.text, { textAlign: "center" }]}>
+                Very Low Pollen Count
+              </Paragraph>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.card,
+                {
+                  flexBasis: cardWidth,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  backgroundColor: "transparent",
+                },
+              ]}
+            >
+              <Feather name="sunset" size={24} color="white" />
+              <Paragraph style={[styles.text, { textAlign: "center" }]}>
+                Moderate UV Index
+              </Paragraph>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.card,
+                {
+                  flexBasis: cardWidth,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  backgroundColor: "transparent",
+                },
+              ]}
+            >
+              <MaterialCommunityIcons name="face-man" size={24} color="white" />
+              <Paragraph style={[styles.text, { textAlign: "center" }]}>
+                Use Oil Control Products
+              </Paragraph>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.card,
+                {
+                  flexBasis: cardWidth,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  backgroundColor: "transparent",
+                },
+              ]}
+            >
+              <FontAwesome name="car" size={24} color="white" />
+              <Paragraph style={[styles.text, { textAlign: "center" }]}>
+                Very Suitable for Car Washing
+              </Paragraph>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.card,
+                {
+                  flexBasis: cardWidth,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 2,
+                  backgroundColor: "transparent",
+                },
+              ]}
+            >
+              <FontAwesome6 name="person-running" size={24} color="white" />
+              <Paragraph style={[styles.text, { textAlign: "center" }]}>
+                Suitable for outdoor workouts
+              </Paragraph>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.card,
+                {
+                  flexBasis: cardWidth,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 2,
+                  backgroundColor: "transparent",
+                },
+              ]}
+            >
+              <FontAwesome5 name="train" size={24} color="white" />
+              <Paragraph style={[styles.text, { textAlign: "center" }]}>
+                Good traffic conditions
+              </Paragraph>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.card,
+                {
+                  flexBasis: cardWidth,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 2,
+                  backgroundColor: "transparent",
+                },
+              ]}
+            >
+              <MaterialCommunityIcons
+                name="palm-tree"
+                size={24}
+                color="white"
+              />
+              <Paragraph style={[styles.text, { textAlign: "center" }]}>
+                Not Suitable for a trip
+              </Paragraph>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.card,
+                {
+                  flexBasis: cardWidth,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 2,
+                  backgroundColor: "transparent",
+                },
+              ]}
+            >
+              <FontAwesome6 name="mosquito" size={24} color="white" />
+              <Paragraph style={[styles.text, { textAlign: "center" }]}>
+                some mosquitos
+              </Paragraph>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -318,17 +556,17 @@ const styles = StyleSheet.create({
   card: {
     marginVertical: 4,
     backgroundColor: "rgba(0, 0, 0, 0.3)",
-    padding: 16,
+    padding: 12,
     borderRadius: 16,
   },
   text: {
     color: "white",
     fontWeight: "500",
-    fontSize: 14,
+    fontSize: 12,
   },
   title: {
     color: "white",
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: 15,
   },
 });
