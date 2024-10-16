@@ -193,11 +193,9 @@ export default function WeatherApp() {
     weatherData?.main?.temp_max,
     temperatureUnit
   );
-  console.log(weatherData);
 
   const sunRiseTime = new Date(weatherData?.sys?.sunrise);
   const sunSetTime = new Date(weatherData?.sys?.sunset);
-  console.log(sunRiseTime.toLocaleTimeString()); // Convert to
   return (
     <View style={styles.container}>
       <StatusBar
@@ -364,6 +362,11 @@ export default function WeatherApp() {
             }}
           >
             <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  `https://www.healthline.com/health/allergies/what-is-pollen-count`
+                )
+              }
               style={[
                 styles.card,
                 {
@@ -382,6 +385,11 @@ export default function WeatherApp() {
             </TouchableOpacity>
 
             <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  `https://www.healthline.com/health-news/tiktok-uv-index-tanning`
+                )
+              }
               style={[
                 styles.card,
                 {
@@ -399,6 +407,11 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  `https://www.healthline.com/health/beauty-skin-care/skin-care-routine-for-oily-skin`
+                )
+              }
               style={[
                 styles.card,
                 {
@@ -416,6 +429,11 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  `https://www.kaercher.com/in/home-garden/know-how/car-washing.html`
+                )
+              }
               style={[
                 styles.card,
                 {
@@ -433,6 +451,11 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  `https://www.healthline.com/nutrition/outdoor-workout-ideas`
+                )
+              }
               style={[
                 styles.card,
                 {
@@ -450,6 +473,11 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  `https://www.sciencedirect.com/topics/computer-science/traffic-condition`
+                )
+              }
               style={[
                 styles.card,
                 {
@@ -467,6 +495,11 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  `https://www.studyandgoabroad.com/travel-tips/travel-dos-donts/`
+                )
+              }
               style={[
                 styles.card,
                 {
@@ -488,6 +521,11 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  `https://en.wikipedia.org/wiki/Mosquito#:~:text=Numerous%20species%20of%20mosquito%20can,.%20tritaeniorhynchus%2C%20and%20Ochlerotatus%20triseriatus.`
+                )
+              }
               style={[
                 styles.card,
                 {
