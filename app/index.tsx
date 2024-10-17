@@ -27,7 +27,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useWeather } from "@/hooks/useWeather";
 import { useTemperature } from "@/hooks/TemperatureContext";
 import { SettingsContext } from "@/hooks/useSettingsContext";
@@ -337,7 +337,10 @@ export default function WeatherApp() {
           ]}
         >
           <TouchableOpacity
-            onPress={() => Linking.openURL(`https://www.healthline.com`)}
+            onPress={() => {
+              const url = "https://www.healthline.com"; // Example URL you want to open
+              router.push(`/webpage?url=${encodeURIComponent(url)}`);
+            }}
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
@@ -362,11 +365,10 @@ export default function WeatherApp() {
             }}
           >
             <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  `https://www.healthline.com/health/allergies/what-is-pollen-count`
-                )
-              }
+              onPress={() => {
+                const url = `https://www.healthline.com/health/allergies/what-is-pollen-count`; // Example URL you want to open
+                router.push(`/webpage?url=${encodeURIComponent(url)}`);
+              }}
               style={[
                 styles.card,
                 {
@@ -385,11 +387,10 @@ export default function WeatherApp() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  `https://www.healthline.com/health-news/tiktok-uv-index-tanning`
-                )
-              }
+              onPress={() => {
+                const url = `https://www.healthline.com/health-news/tiktok-uv-index-tanning`; // Example URL you want to open
+                router.push(`/webpage?url=${encodeURIComponent(url)}`);
+              }}
               style={[
                 styles.card,
                 {
@@ -407,11 +408,10 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  `https://www.healthline.com/health/beauty-skin-care/skin-care-routine-for-oily-skin`
-                )
-              }
+              onPress={() => {
+                const url = `https://www.healthline.com/health/beauty-skin-care/skin-care-routine-for-oily-skin`; // Example URL you want to open
+                router.push(`/webpage?url=${encodeURIComponent(url)}`);
+              }}
               style={[
                 styles.card,
                 {
@@ -429,11 +429,10 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  `https://www.kaercher.com/in/home-garden/know-how/car-washing.html`
-                )
-              }
+              onPress={() => {
+                const url = `https://www.kaercher.com/in/home-garden/know-how/car-washing.html`; // Example URL you want to open
+                router.push(`/webpage?url=${encodeURIComponent(url)}`);
+              }}
               style={[
                 styles.card,
                 {
@@ -451,11 +450,10 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  `https://www.healthline.com/nutrition/outdoor-workout-ideas`
-                )
-              }
+              onPress={() => {
+                const url = `https://www.healthline.com/nutrition/outdoor-workout-ideas`; // Example URL you want to open
+                router.push(`/webpage?url=${encodeURIComponent(url)}`);
+              }}
               style={[
                 styles.card,
                 {
@@ -473,11 +471,10 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  `https://www.sciencedirect.com/topics/computer-science/traffic-condition`
-                )
-              }
+              onPress={() => {
+                const url = `https://www.sciencedirect.com/topics/computer-science/traffic-condition`; // Example URL you want to open
+                router.push(`/webpage?url=${encodeURIComponent(url)}`);
+              }}
               style={[
                 styles.card,
                 {
@@ -495,11 +492,10 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  `https://www.studyandgoabroad.com/travel-tips/travel-dos-donts/`
-                )
-              }
+              onPress={() => {
+                const url = `https://www.studyandgoabroad.com/travel-tips/travel-dos-donts/`; // Example URL you want to open
+                router.push(`/webpage?url=${encodeURIComponent(url)}`);
+              }}
               style={[
                 styles.card,
                 {
@@ -521,11 +517,10 @@ export default function WeatherApp() {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  `https://en.wikipedia.org/wiki/Mosquito#:~:text=Numerous%20species%20of%20mosquito%20can,.%20tritaeniorhynchus%2C%20and%20Ochlerotatus%20triseriatus.`
-                )
-              }
+              onPress={() => {
+                const url = `https://en.wikipedia.org/wiki/Mosquito#:~:text=Numerous%20species%20of%20mosquito%20can,.%20tritaeniorhynchus%2C%20and%20Ochlerotatus%20triseriatus.`; // Example URL you want to open
+                router.push(`/webpage?url=${encodeURIComponent(url)}`);
+              }}
               style={[
                 styles.card,
                 {

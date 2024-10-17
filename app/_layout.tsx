@@ -83,6 +83,7 @@ export default function RootLayout() {
               <Stack.Screen name="settings" options={{ headerShown: false }} />
               <Stack.Screen name="city" options={{ headerShown: false }} />
               <Stack.Screen name="about" options={{ headerShown: false }} />
+              <Stack.Screen name="webpage" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
             </Stack>
             <Toast />
