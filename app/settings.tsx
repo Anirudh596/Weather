@@ -12,6 +12,7 @@ import {
 } from "react-native-paper";
 import { router } from "expo-router";
 import { SettingsContext } from "@/hooks/useSettingsContext";
+import { useWeatherSelection } from "@/hooks/WeatherContext";
 
 const Settings = () => {
   const settings = useContext(SettingsContext);
@@ -40,9 +41,11 @@ const Settings = () => {
     wind: false,
     pressure: false,
     visibility: false,
+    weather: false,
+    time: false,
   });
 
-  const openModal = (modalName) =>
+  const openModal = (modalName: string) =>
     setModalsVisible({ ...modalsVisible, [modalName]: true });
   const closeAllModals = () =>
     setModalsVisible({
@@ -50,7 +53,17 @@ const Settings = () => {
       wind: false,
       pressure: false,
       visibility: false,
+      weather: false,
+      time: false,
     });
+  const {
+    isTestingMode,
+    setIsTestingMode,
+    selectedWeather,
+    setSelectedWeather,
+    isDaytime,
+    setIsDaytime,
+  } = useWeatherSelection(); // Accessing weather context
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,6 +73,7 @@ const Settings = () => {
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.scrollView}>
+        {/* Existing sections */}
         <View style={styles.section}>
           <List.Subheader style={styles.subheader}>
             Weather alerts
@@ -87,6 +101,18 @@ const Settings = () => {
                 color="#627E75"
                 value={dailyForecast}
                 onValueChange={() => setDailyForecast(!dailyForecast)}
+              />
+            )}
+          />
+          <List.Item
+            title="App Mode"
+            titleStyle={{ color: "#000" }}
+            description={isTestingMode ? "Testing" : "Production"}
+            right={() => (
+              <Switch
+                color="#627E75"
+                value={isTestingMode}
+                onValueChange={() => setIsTestingMode(!isTestingMode)}
               />
             )}
           />
@@ -123,6 +149,33 @@ const Settings = () => {
 
           <Divider />
         </View>
+
+        {isTestingMode ? (
+          <View style={styles.section}>
+            <List.Subheader style={styles.subheader}>
+              Testing Mode
+            </List.Subheader>
+
+            {/* Weather Selection */}
+            <List.Item
+              title="Select Weather"
+              titleStyle={{ color: "#000" }}
+              description={selectedWeather}
+              onPress={() => openModal("weather")}
+            />
+
+            {/* Day/Night Selection */}
+            <List.Item
+              title="Select Time of Day"
+              titleStyle={{ color: "#000" }}
+              description={isDaytime ? "Day" : "Night"}
+              onPress={() => openModal("time")}
+            />
+
+            <Divider />
+          </View>
+        ) : null}
+
         {/* About Weather Section */}
         <View style={styles.section}>
           <List.Item
@@ -251,6 +304,74 @@ const Settings = () => {
               color="#627E75"
               label="Miles (mi)"
               value="Miles (mi)"
+            />
+          </RadioButton.Group>
+          <Button
+            buttonColor="#627E75"
+            labelStyle={{ color: "#fff" }}
+            onPress={closeAllModals}
+          >
+            Done
+          </Button>
+        </Modal>
+        <Modal
+          contentContainerStyle={styles.modalContainer}
+          visible={modalsVisible.weather}
+          onDismiss={closeAllModals}
+        >
+          <RadioButton.Group
+            onValueChange={(value) => setSelectedWeather(value)}
+            value={selectedWeather}
+          >
+            <RadioButton.Item
+              label="Clear"
+              color="#627E75"
+              labelStyle={{ color: "#000" }}
+              value="Clear"
+            />
+            <RadioButton.Item
+              label="Rain"
+              color="#627E75"
+              labelStyle={{ color: "#000" }}
+              value="Rain"
+            />
+            <RadioButton.Item
+              label="Thunderstorm"
+              color="#627E75"
+              labelStyle={{ color: "#000" }}
+              value="Thunderstorm"
+            />
+          </RadioButton.Group>
+          <Button
+            buttonColor="#627E75"
+            labelStyle={{ color: "#fff" }}
+            onPress={closeAllModals}
+          >
+            Done
+          </Button>
+        </Modal>
+
+        {/* Modal for Day/Night Selection */}
+        <Modal
+          contentContainerStyle={styles.modalContainer}
+          visible={modalsVisible.time}
+          onDismiss={closeAllModals}
+        >
+          <RadioButton.Group
+            onValueChange={(value) => setIsDaytime(value === "day")}
+            value={isDaytime ? "day" : "night"}
+          >
+            <RadioButton.Item
+              label="Day"
+              color="#627E75"
+              labelStyle={{ color: "#000" }}
+              value="day"
+            />
+            <RadioButton.Item
+              label="Night"
+              color="#627E75"
+              labelStyle={{ color: "#000" }}
+              value="night"
             />
           </RadioButton.Group>
           <Button

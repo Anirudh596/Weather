@@ -16,7 +16,10 @@ const City = () => {
       <Appbar.Header style={{ backgroundColor: "#ffffff" }}>
         <Appbar.BackAction onPress={() => router.back()} color="#000" />
         <Appbar.Content title="Cities" color="#000" />
-        <Appbar.Action icon={"plus"} onPress={() => console.log("added")} />
+        <Appbar.Action
+          icon={"plus"}
+          onPress={() => router.push("/selectCity")}
+        />
       </Appbar.Header>
     </SafeAreaView>
   );

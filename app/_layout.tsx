@@ -17,6 +17,8 @@ import { TemperatureProvider } from "@/hooks/TemperatureContext";
 import { PaperProvider } from "react-native-paper";
 import { SettingsProvider } from "@/hooks/useSettingsContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { WeatherProvider } from "@/hooks/WeatherContext";
+import { CityProvider } from "@/hooks/CityProvider";
 
 SplashScreen.preventAutoHideAsync(); // Keep splash screen visible by default
 
@@ -75,21 +77,35 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TemperatureProvider>
-        <SettingsProvider>
-          <PaperProvider>
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="settings" options={{ headerShown: false }} />
-              <Stack.Screen name="city" options={{ headerShown: false }} />
-              <Stack.Screen name="about" options={{ headerShown: false }} />
-              <Stack.Screen name="webpage" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <Toast />
-          </PaperProvider>
-        </SettingsProvider>
-      </TemperatureProvider>
+      <CityProvider>
+        <WeatherProvider>
+          <TemperatureProvider>
+            <SettingsProvider>
+              <PaperProvider>
+                <Stack>
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="settings"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="city" options={{ headerShown: false }} />
+                  <Stack.Screen name="about" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="webpage"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="selectCity"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <Toast />
+              </PaperProvider>
+            </SettingsProvider>
+          </TemperatureProvider>
+        </WeatherProvider>
+      </CityProvider>
     </GestureHandlerRootView>
   );
 }
