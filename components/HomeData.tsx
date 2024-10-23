@@ -1,5 +1,6 @@
 import {
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,6 +20,11 @@ import {
 } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import { Paragraph, Title } from "react-native-paper";
+import sun from "../assets/images/sun.png";
+import storm from "../assets/images/storm.png";
+import rainy from "../assets/images/rainy.png";
+import cloudy from "../assets/images/cloudy.png";
+import snow from "../assets/images/snowflake.png";
 
 const { width, height } = Dimensions.get("window");
 
@@ -52,6 +58,42 @@ const HomeData = ({
   visibilityUnit: any;
 }) => {
   const cardWidth = width > 600 ? "30%" : "30%";
+  const getIcon = (weather: any) => {
+    switch (weather) {
+      case "Clear":
+        return sun;
+      case "Clouds":
+        return cloudy;
+      case "Rain":
+        return rainy;
+      case "Snow":
+        return snow;
+      case "Thunderstorm":
+        return storm;
+      case "Drizzle":
+        return cloudy;
+      case "Mist":
+        return cloudy;
+      case "Fog":
+        return cloudy;
+      case "Haze":
+        return cloudy;
+      case "Smoke":
+        return cloudy;
+      case "Dust":
+        return cloudy;
+      case "Sand":
+        return cloudy;
+      case "Ash":
+        return cloudy;
+      case "Squall":
+        return cloudy;
+      case "Tornado":
+        return storm;
+      default:
+        return cloudy;
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.overlay}>
@@ -72,10 +114,26 @@ const HomeData = ({
         </View>
       </View>
       <View style={{ padding: 24, marginBottom: 12 }}>
-        <Text style={styles.tempText}>
-          {Math.round(temperature)}°
-          {temperatureUnit === "Celsius (°C)" ? "C" : "F"}
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical: 16,
+          }}
+        >
+          {getIcon(weatherData?.weather[0]?.main) ? (
+            <Image
+              source={getIcon(weatherData?.weather[0]?.main) || "Clear"}
+              style={{ width: width * 0.3, height: width * 0.3 }}
+            />
+          ) : null}
+
+          <Text style={styles.tempText}>
+            {Math.round(temperature)}°
+            {temperatureUnit === "Celsius (°C)" ? "C" : "F"}
+          </Text>
+        </View>
         <View
           style={{
             flexDirection: "row",
