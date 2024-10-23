@@ -67,8 +67,16 @@ export default function WeatherApp() {
   const { selectedWeather, isDaytime, isTestingMode } = useWeatherSelection();
   const [videoError, setVideoError] = useState(false); // Track video loading error
 
+  // Handle video errors
   const handleVideoError = () => {
-    setVideoError(true); // If video fails, show a static background
+    setVideoError(true); // Set error state if video fails
+  };
+
+  // Retry video playback after the error is resolved
+  const retryVideoPlayback = () => {
+    if (videoError) {
+      setVideoError(false); // Reset video error state
+    }
   };
 
   const saveLocation = async (coords: {
@@ -123,6 +131,7 @@ export default function WeatherApp() {
   useEffect(() => {
     requestLocationPermission();
     loadLastLocation(); // Load the last location when the app starts
+    retryVideoPlayback();
   }, []);
 
   useEffect(() => {
@@ -166,8 +175,9 @@ export default function WeatherApp() {
         "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265451/174262-851138194_ilyf3w.mp4",
     },
     Drizzle: {
-      day: "https://example.com/day_drizzle.mp4",
-      night: "https://example.com/night_drizzle.mp4",
+      day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
+      night:
+        "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265145/159300-818469277_hnpl78_uhmgiv.mp4",
     },
     Thunderstorm: {
       day: "https://example.com/day_thunderstorm.mp4",
@@ -180,12 +190,14 @@ export default function WeatherApp() {
         "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265625/191441-890098915_bhq1tb.mp4 ",
     },
     Mist: {
-      day: "https://example.com/day_mist.mp4",
-      night: "https://example.com/night_mist.mp4",
+      day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
+      night:
+        "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265145/159300-818469277_hnpl78_uhmgiv.mp4",
     },
     Smoke: {
-      day: "https://example.com/day_smoke.mp4",
-      night: "https://example.com/night_smoke.mp4",
+      day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
+      night:
+        "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265145/159300-818469277_hnpl78_uhmgiv.mp4",
     },
     Haze: {
       day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729012775/12488549_1080_1920_30fps_tey1dc.mp4",
@@ -193,24 +205,29 @@ export default function WeatherApp() {
         "https://res.cloudinary.com/djgpm9plo/video/upload/v1729012846/Untitled_video_-_Made_with_Clipchamp_1_noq1ud.mp4",
     },
     Dust: {
-      day: "https://example.com/day_dust.mp4",
-      night: "https://example.com/night_dust.mp4",
+      day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
+      night:
+        "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265145/159300-818469277_hnpl78_uhmgiv.mp4",
     },
     Fog: {
-      day: "https://example.com/day_fog.mp4",
-      night: "https://example.com/night_fog.mp4",
+      day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
+      night:
+        "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265145/159300-818469277_hnpl78_uhmgiv.mp4",
     },
     Sand: {
-      day: "https://example.com/day_sand.mp4",
-      night: "https://example.com/night_sand.mp4",
+      day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
+      night:
+        "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265145/159300-818469277_hnpl78_uhmgiv.mp4",
     },
     Ash: {
-      day: "https://example.com/day_ash.mp4",
-      night: "https://example.com/night_ash.mp4",
+      day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
+      night:
+        "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265145/159300-818469277_hnpl78_uhmgiv.mp4",
     },
     Squall: {
-      day: "https://example.com/day_squall.mp4",
-      night: "https://example.com/night_squall.mp4",
+      day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1729011643/Untitled_video_-_Made_with_Clipchamp_krdfvb.mp4",
+      night:
+        "https://res.cloudinary.com/dvazjqpgb/video/upload/v1729265145/159300-818469277_hnpl78_uhmgiv.mp4",
     },
     Tornado: {
       day: "https://res.cloudinary.com/djgpm9plo/video/upload/v1728810171/191224-889684869_medium_online-video-cutter.com_wc4l0c.mp4",
@@ -220,9 +237,9 @@ export default function WeatherApp() {
   };
 
   const isDaytime2 = () => {
-    const currentTime = new Date().getTime(); // current time
-    const sunriseTime = new Date(weatherData?.sys?.sunrise * 1000).getTime(); // sunrise
-    const sunsetTime = new Date(weatherData?.sys?.sunset * 1000).getTime(); // sunset
+    const currentTime = new Date().getTime();
+    const sunriseTime = new Date(weatherData?.sys?.sunrise * 1000).getTime();
+    const sunsetTime = new Date(weatherData?.sys?.sunset * 1000).getTime();
     return currentTime >= sunriseTime && currentTime < sunsetTime;
   };
 
@@ -275,7 +292,7 @@ export default function WeatherApp() {
     weatherData?.main?.temp_max,
     temperatureUnit
   );
-  console.log(videoUriTest);
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -283,21 +300,8 @@ export default function WeatherApp() {
         backgroundColor={color === "dark" ? "black" : "white"}
       />
 
-      {videoError && videoUri ? (
-        <View style={styles.videoWrapper}>
-          <Video
-            ref={videoRef}
-            source={{ uri: isTestingMode ? videoUriTest : videoUri }}
-            style={styles.videoBackground}
-            resizeMode="cover"
-            shouldPlay
-            isLooping
-            isMuted={true}
-            rate={0.4}
-            onError={handleVideoError} // Handle video error
-          />
-        </View>
-      ) : isTestingMode ? (
+      {!videoError && videoUri ? (
+        // If video is available and no error, show the video
         <View style={styles.videoWrapper}>
           <Video
             ref={videoRef}
@@ -312,7 +316,9 @@ export default function WeatherApp() {
           />
         </View>
       ) : (
+        // Otherwise, show the static background
         <View style={styles.staticBackground}>
+          <Text style={styles.errorText}>Playing static background...</Text>
           <HomeData
             weatherData={weatherData}
             airQuality={airQuality}
@@ -330,7 +336,6 @@ export default function WeatherApp() {
           />
         </View>
       )}
-
       <HomeData
         weatherData={weatherData}
         airQuality={airQuality}
@@ -349,20 +354,20 @@ export default function WeatherApp() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
   videoWrapper: {
     position: "absolute",
-    top: ReactStatusBar.currentHeight,
+    top: 0,
     left: 0,
     width,
     height,
   },
   videoBackground: { width: "100%", height: "100%" },
   staticBackground: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#627E75", // Use an image or set a background color
+    flex: 1,
+    backgroundColor: "#627E75", // Fallback background color
     justifyContent: "center",
     alignItems: "center",
   },
